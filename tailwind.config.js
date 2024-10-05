@@ -10,8 +10,9 @@ export default {
       },
       colors: {
         primary: "#04e762",
-        secBlue: "#0904E7",
-        secPurple: "#9104E7",
+
+        secBlue: "#00CCDD",
+        secPurple: "#B100DD",
         background: "#111111",
       },
     },
