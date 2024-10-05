@@ -4,8 +4,16 @@ import BtnPrimary from "../components/BtnPrimary";
 const Steganography: React.FC = () => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [encodedImageSrc, setEncodedImageSrc] = useState<string | null>(null);
+  const [decodedImageSrc, setDecodedImageSrc] = useState<string | null>(null);
   const [message, setMessage] = useState<string>("");
   const [decodedMessage, setDecodedMessage] = useState<string>("");
+  const [fileName, setFileName] = useState<string>(
+    "Tidak ada gambar yang dipilih"
+  );
+  const [encodedFileName, setEncodedFileName] = useState<string>("");
+  const [decodeFileName, setDecodeFileName] = useState<string>(
+    "Tidak ada gambar yang dipilih"
+  );
 
   // Fungsi untuk mengubah teks menjadi biner
   const textToBinary = (text: string) => {
@@ -28,18 +36,20 @@ const Steganography: React.FC = () => {
     const rgba = imageData.data;
     let messageIndex = 0;
 
+    // Tambahkan null terminator ke akhir pesan
+    binaryMessage += "00000000";
+
     // Sisipkan pesan ke dalam bit paling tidak signifikan (LSB)
     for (let i = 0; i < rgba.length; i += 4) {
-      // Proses setiap piksel (komponen R, G, B) untuk menyisipkan bit pesan
       for (let j = 0; j < 3; j++) {
         if (messageIndex < binaryMessage.length) {
           const bit = binaryMessage[messageIndex];
-          rgba[i + j] = (rgba[i + j] & 0xfe) | parseInt(bit); // Ganti LSB dengan bit pesan
+          rgba[i + j] = (rgba[i + j] & 0xfe) | parseInt(bit);
           messageIndex++;
+        } else {
+          return imageData;
         }
       }
-      // Berhenti jika pesan selesai
-      if (messageIndex >= binaryMessage.length) break;
     }
     return imageData;
   };
@@ -69,20 +79,65 @@ const Steganography: React.FC = () => {
     return binaryToText(binaryMessage); // Konversi kembali ke teks
   };
 
+  const handleEncodedImageUpload = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (file) {
+      const isImage =
+        file.type === "image/png" ||
+        file.type === "image/jpeg" ||
+        file.type === "image/jpg";
+
+      if (isImage) {
+        setDecodeFileName(file.name);
+
+        const img = new Image();
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          img.src = e.target?.result as string;
+          img.onload = () => {
+            setDecodedImageSrc(img.src);
+          };
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setFileName("Format file tidak didukung");
+        setDecodedImageSrc(null);
+      }
+    }
+  };
+
   // Fungsi untuk mengunggah gambar
   // Fungsi untuk mengunggah gambar
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+
     if (file) {
-      const img = new Image();
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        img.src = e.target?.result as string;
-        img.onload = () => {
-          setImageSrc(img.src);
+      // Pengecekan format file (hanya menerima .png dan .jpg/.jpeg)
+      const isImage =
+        file.type === "image/png" ||
+        file.type === "image/jpeg" ||
+        file.type === "image/jpg";
+
+      if (isImage) {
+        setFileName(file.name); // Menampilkan nama file jika formatnya benar
+
+        const img = new Image();
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          img.src = e.target?.result as string;
+          img.onload = () => {
+            setImageSrc(img.src); // Set gambar ke state jika berhasil di-load
+          };
         };
-      };
-      reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
+      } else {
+        // Tampilkan pesan error jika format file tidak didukung
+        setFileName("Format file tidak didukung");
+        setImageSrc(""); // Kosongkan gambar jika file tidak valid
+      }
     }
   };
 
@@ -107,49 +162,69 @@ const Steganography: React.FC = () => {
         ctx.putImageData(newImageData, 0, 0);
         const newImageSrc = canvas.toDataURL();
         setEncodedImageSrc(newImageSrc);
+        console.log(newImageData);
+        console.log(newImageSrc);
       }
     }
   };
 
   // Fungsi untuk mendecode pesan dari gambar
   const decodeMessageFromImage = () => {
-    const img = document.querySelector<HTMLImageElement>("#encodedImage");
-    const messageLength = message.length; // Asumsikan panjang pesan diketahui atau disisipkan
+    const img = document.querySelector<HTMLImageElement>("#imageEncoded");
     if (img) {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
 
       if (ctx) {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0); // Menggambar gambar ke canvas
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        ctx.drawImage(img, 0, 0);
 
-        const imageData = ctx.getImageData(0, 0, img.width, img.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const extractedMessage = extractMessageFromImage(
           imageData,
-          messageLength
-        ); // Ambil pesan
+          message.length
+        );
 
-        setDecodedMessage(extractedMessage); // Set pesan yang didekode
+        setDecodedMessage(extractedMessage);
       }
     }
   };
 
   return (
     <>
-      <main className="h-full p-12 mx-4 mt-4 border-2 text-primary border-primary">
+      <main className="h-full p-12 m-4 border-2 text-primary border-primary">
         <h1 className="mb-8 text-xl font-bold text-white font-code">
           Steganography with LSB
         </h1>
+
+        <button></button>
         <div className="flex justify-center w-full h-full gap-4">
           {/* Bagian input gambar dan pesan */}
-          <div className="flex flex-col w-full h-full gap-4 p-4 border-2 border-primary">
-            <img src={imageSrc || ""} id="gambar" alt="Uploaded" />
+          <div className="flex flex-col w-full h-full gap-4 p-4 border-2 border-secPurple">
+            <h2 className="text-base font-bold text-center text-primary font-code">
+              Input
+            </h2>
+            <img
+              src={imageSrc || ""}
+              id="gambar"
+              alt="Uploaded"
+              className="max-h-72 object-contain w-auto"
+            />
+            <p
+              id="fileName"
+              className="text-white font-base text-center font-code text-xs"
+            >
+              {fileName}
+            </p>
             <label
               htmlFor="imageUpload"
-              className="inline-block px-4 py-2 text-white bg-blue-500 rounded-lg cursor-pointer"
+              className="inline-block cursor-pointer text-sm font-text font-semibold text-secPurple text-center px-3 relative top-0 left-0 py-2 transition-all duration-100 border-2 border-secPurple bg-background ${textColor}
+              hover:top-[-2px] hover:left-[-2px]
+              after:content-[''] after:absolute after:border-secPurple after:-z-10 after:border-2 after:h-full after:w-full after:transition-all after:duration-300 after:top-0 after:left-0 
+              hover:after:translate-x-[6px] hover:after:translate-y-[6px]"
             >
-              Upload Image
+              Pilih Gambar
             </label>
             <input
               type="file"
@@ -163,44 +238,125 @@ const Steganography: React.FC = () => {
               placeholder="Masukkan pesan"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="h-24 px-4 py-2 font-semibold rounded-lg text-background font-text"
+              className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
             />
-            <button
+            <BtnPrimary
+              bgColor="bg-secPurple"
+              borderColor="border-secPurple"
+              label="Sematkan Pesan"
               onClick={encodeMessageIntoImage}
-              className="px-4 py-2 text-white bg-blue-600"
-            >
-              Encode Message
-            </button>
-            <BtnPrimary color="secBlue" label="Encoded Image" />
+            />
           </div>
-
           {/* Bagian output gambar yang sudah disisipkan pesan */}
-          <div className="flex flex-col w-full h-full p-4 border-2 border-primary">
+          <div className="flex flex-col w-full h-full gap-4 p-4 border-2 border-secPurple">
+            <h2 className="text-base font-bold text-center text-primary font-code">
+              Output
+            </h2>
             {encodedImageSrc && (
               <>
                 <img
                   src={encodedImageSrc}
                   id="encodedImage"
                   alt="Encoded Image"
+                  className="max-h-72 object-contain w-auto"
                 />
-                <a href={encodedImageSrc} download="encoded-image.png">
-                  <button className="px-4 py-2 text-white bg-green-600">
-                    Download Encoded Image
-                  </button>
+                <p className="text-white font-base text-center font-code text-xs">
+                  {fileName + " (sudah disematkan)"}
+                </p>
+                <h3 className="font-text text-secPurple text-md m-2 font-semibold">
+                  Masukkan Nama File{" "}
+                  <span className="text-sm">(format otomatis .png)</span>
+                </h3>
+                <textarea
+                  name="fileName"
+                  id="fileName"
+                  placeholder="Masukkan nama file"
+                  value={encodedFileName}
+                  onChange={(e) => setEncodedFileName(e.target.value)}
+                  className="focus:ring-[3px] text-sm border-none focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
+                />
+                <a
+                  href={encodedImageSrc}
+                  download={encodedFileName + ".png"}
+                  className="inline-block w-full"
+                >
+                  <BtnPrimary
+                    bgColor="bg-secPurple"
+                    borderColor="border-secPurple"
+                    label="Download Gambar"
+                  />
                 </a>
-                <button
+                {/* <button
                   onClick={decodeMessageFromImage}
                   className="px-4 py-2 text-white bg-yellow-600"
                 >
                   Decode Message
-                </button>
+                </button> */}
               </>
             )}
-            {decodedMessage && (
+            {/* {decodedMessage && (
               <p className="mt-4 text-white">
                 Decoded Message: {decodedMessage}
               </p>
+            )} */}
+          </div>
+
+          <div className="flex flex-col w-full h-full gap-4 p-4 border-2 border-secPurple">
+            <h2 className="text-base font-bold text-center text-primary font-code">
+              Lihat Pesan
+            </h2>
+            <img
+              src={decodedImageSrc || ""}
+              id="imageEncoded"
+              alt="Uploaded"
+              className="max-h-[50%] w-auto"
+            />
+            <p
+              id="fileName"
+              className="text-white font-base text-center font-code text-xs"
+            >
+              {decodeFileName}
+            </p>
+            <label
+              htmlFor="encodedImageUpload"
+              className="inline-block cursor-pointer text-sm font-text font-semibold text-secPurple text-center px-3 relative top-0 left-0 py-2 transition-all duration-100 border-2 border-secPurple bg-background ${textColor}
+    hover:top-[-2px] hover:left-[-2px]
+    after:content-[''] after:absolute after:border-secPurple after:-z-10 after:border-2 after:h-full after:w-full after:transition-all after:duration-300 after:top-0 after:left-0 
+    hover:after:translate-x-[6px] hover:after:translate-y-[6px]"
+            >
+              Pilih Gambar
+            </label>
+            <input
+              type="file"
+              id="encodedImageUpload"
+              onChange={handleEncodedImageUpload}
+              className="hidden"
+            />
+
+            {decodedMessage ? (
+              <textarea
+                name="pesan"
+                id="pesan"
+                placeholder="Pesan yang diekstrak akan muncul di sini"
+                value={decodedMessage}
+                readOnly
+                className="focus:ring-none border-none focus:border-none focus:ring-primary text-sm px-4 py-2 font-base rounded-lg text-background font-text"
+              />
+            ) : (
+              <textarea
+                name="pesan"
+                id="pesan"
+                placeholder="Pesan yang akan muncul di sini"
+                readOnly
+                className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
+              />
             )}
+            <BtnPrimary
+              bgColor="bg-secPurple"
+              borderColor="border-secPurple"
+              label="Lihat Pesan"
+              onClick={decodeMessageFromImage}
+            />
           </div>
         </div>
       </main>
