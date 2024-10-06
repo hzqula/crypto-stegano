@@ -209,11 +209,11 @@ const Steganography: React.FC = () => {
               src={imageSrc || ""}
               id="gambar"
               alt="Uploaded"
-              className="max-h-72 object-contain w-auto"
+              className="object-contain w-auto max-h-72"
             />
             <p
               id="fileName"
-              className="text-white font-base text-center font-code text-xs"
+              className="text-xs text-center text-white font-base font-code"
             >
               {fileName}
             </p>
@@ -258,12 +258,12 @@ const Steganography: React.FC = () => {
                   src={encodedImageSrc}
                   id="encodedImage"
                   alt="Encoded Image"
-                  className="max-h-72 object-contain w-auto"
+                  className="object-contain w-auto max-h-72"
                 />
-                <p className="text-white font-base text-center font-code text-xs">
+                <p className="text-xs text-center text-white font-base font-code">
                   {fileName + " (sudah disematkan)"}
                 </p>
-                <h3 className="font-text text-secPurple text-md m-2 font-semibold">
+                <h3 className="m-2 font-semibold font-text text-secPurple text-md">
                   Masukkan Nama File{" "}
                   <span className="text-sm">(format otomatis .png)</span>
                 </h3>
@@ -286,19 +286,8 @@ const Steganography: React.FC = () => {
                     label="Download Gambar"
                   />
                 </a>
-                {/* <button
-                  onClick={decodeMessageFromImage}
-                  className="px-4 py-2 text-white bg-yellow-600"
-                >
-                  Decode Message
-                </button> */}
               </>
             )}
-            {/* {decodedMessage && (
-              <p className="mt-4 text-white">
-                Decoded Message: {decodedMessage}
-              </p>
-            )} */}
           </div>
 
           <div className="flex flex-col w-full h-full gap-4 p-4 border-2 border-secPurple">
@@ -313,7 +302,7 @@ const Steganography: React.FC = () => {
             />
             <p
               id="fileName"
-              className="text-white font-base text-center font-code text-xs"
+              className="text-xs text-center text-white font-base font-code"
             >
               {decodeFileName}
             </p>
@@ -340,7 +329,7 @@ const Steganography: React.FC = () => {
                 placeholder="Pesan yang diekstrak akan muncul di sini"
                 value={decodedMessage}
                 readOnly
-                className="focus:ring-none border-none focus:border-none focus:ring-primary text-sm px-4 py-2 font-base rounded-lg text-background font-text"
+                className="px-4 py-2 text-sm border-none rounded-lg focus:ring-none focus:border-none focus:ring-primary font-base text-background font-text"
               />
             ) : (
               <textarea
