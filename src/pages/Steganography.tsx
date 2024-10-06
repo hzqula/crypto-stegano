@@ -326,7 +326,6 @@ const Steganography: React.FC = () => {
               <textarea
                 name="pesan"
                 id="pesan"
-                placeholder="Pesan yang diekstrak akan muncul di sini"
                 value={decodedMessage}
                 readOnly
                 className="px-4 py-2 text-sm border-none rounded-lg focus:ring-none focus:border-none focus:ring-primary font-base text-background font-text"
@@ -335,7 +334,7 @@ const Steganography: React.FC = () => {
               <textarea
                 name="pesan"
                 id="pesan"
-                placeholder="Pesan yang akan muncul di sini"
+                placeholder="Pesan akan muncul di sini"
                 readOnly
                 className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
               />
