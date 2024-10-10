@@ -15,68 +15,66 @@ const Steganography: React.FC = () => {
     "Tidak ada gambar yang dipilih"
   );
 
-  // Fungsi untuk mengubah teks menjadi biner
+  const END_MARKER = "00000000".repeat(4);
+
   const textToBinary = (text: string) => {
     return text
       .split("")
       .map((char) => char.charCodeAt(0).toString(2).padStart(8, "0"))
-      .join(""); // Setiap karakter diubah ke biner 8 bit
+      .join("");
   };
 
-  // Fungsi untuk mengubah biner menjadi teks
   const binaryToText = (binary: string) => {
-    const charArray = binary.match(/.{1,8}/g); // Pisahkan string biner menjadi 8 bit per karakter
+    const charArray = binary.match(/.{1,8}/g);
     return charArray
       ? charArray.map((bin) => String.fromCharCode(parseInt(bin, 2))).join("")
       : "";
   };
 
-  // Fungsi untuk menyisipkan pesan ke gambar
   const embedMessageInImage = (imageData: ImageData, binaryMessage: string) => {
     const rgba = imageData.data;
     let messageIndex = 0;
 
-    // Tambahkan null terminator ke akhir pesan
-    binaryMessage += "00000000";
+    const messageLengthBinary = binaryMessage.length
+      .toString(2)
+      .padStart(32, "0");
+    const fullMessage = messageLengthBinary + binaryMessage + END_MARKER;
 
-    // Sisipkan pesan ke dalam bit paling tidak signifikan (LSB)
-    for (let i = 0; i < rgba.length; i += 4) {
-      for (let j = 0; j < 3; j++) {
-        if (messageIndex < binaryMessage.length) {
-          const bit = binaryMessage[messageIndex];
-          rgba[i + j] = (rgba[i + j] & 0xfe) | parseInt(bit);
-          messageIndex++;
-        } else {
-          return imageData;
-        }
-      }
+    for (let i = 0; i < rgba.length && messageIndex < fullMessage.length; i++) {
+      const bit = fullMessage[messageIndex];
+      rgba[i] = (rgba[i] & 0xfe) | parseInt(bit);
+      messageIndex++;
     }
+
     return imageData;
   };
 
-  // Fungsi untuk mengambil pesan dari gambar
-  const extractMessageFromImage = (
-    imageData: ImageData,
-    messageLength: number
-  ) => {
+  const extractMessageFromImage = (imageData: ImageData) => {
     const rgba = imageData.data;
     let binaryMessage = "";
-    let messageBitCount = messageLength * 8; // Total bit untuk pesan
 
-    // Ekstraksi LSB dari setiap komponen warna
-    for (let i = 0; i < rgba.length; i += 4) {
-      for (let j = 0; j < 3; j++) {
-        if (binaryMessage.length < messageBitCount) {
-          const lsb = (rgba[i + j] & 1).toString(); // Ambil bit paling terakhir
-          binaryMessage += lsb;
-        } else {
-          break;
-        }
-      }
-      if (binaryMessage.length >= messageBitCount) break;
+    // Extract message length (first 32 bits)
+    for (let i = 0; i < 32; i++) {
+      binaryMessage += (rgba[i] & 1).toString();
     }
 
-    return binaryToText(binaryMessage); // Konversi kembali ke teks
+    const messageLength = parseInt(binaryMessage, 2);
+    binaryMessage = "";
+
+    // Extract the actual message
+    for (let i = 32; i < rgba.length; i++) {
+      const bit = (rgba[i] & 1).toString();
+      binaryMessage += bit;
+      if (binaryMessage.length >= messageLength + END_MARKER.length) break;
+    }
+
+    // Remove end marker
+    const endMarkerIndex = binaryMessage.indexOf(END_MARKER);
+    if (endMarkerIndex !== -1) {
+      binaryMessage = binaryMessage.slice(0, endMarkerIndex);
+    }
+
+    return binaryToText(binaryMessage);
   };
 
   const handleEncodedImageUpload = (
@@ -141,7 +139,6 @@ const Steganography: React.FC = () => {
     }
   };
 
-  // Fungsi untuk menyisipkan pesan dan meng-update gambar
   const encodeMessageIntoImage = () => {
     const binaryMessage = textToBinary(message);
 
@@ -151,24 +148,20 @@ const Steganography: React.FC = () => {
       const ctx = canvas.getContext("2d");
 
       if (ctx) {
-        // Pastikan canvas memiliki ukuran yang sesuai dengan gambar asli
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight;
-        ctx.drawImage(img, 0, 0); // Menggambar gambar ke canvas
+        ctx.drawImage(img, 0, 0);
 
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const newImageData = embedMessageInImage(imageData, binaryMessage);
 
         ctx.putImageData(newImageData, 0, 0);
-        const newImageSrc = canvas.toDataURL();
+        const newImageSrc = canvas.toDataURL("image/png");
         setEncodedImageSrc(newImageSrc);
-        console.log(newImageData);
-        console.log(newImageSrc);
       }
     }
   };
 
-  // Fungsi untuk mendecode pesan dari gambar
   const decodeMessageFromImage = () => {
     const img = document.querySelector<HTMLImageElement>("#imageEncoded");
     if (img) {
@@ -181,10 +174,7 @@ const Steganography: React.FC = () => {
         ctx.drawImage(img, 0, 0);
 
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const extractedMessage = extractMessageFromImage(
-          imageData,
-          message.length
-        );
+        const extractedMessage = extractMessageFromImage(imageData);
 
         setDecodedMessage(extractedMessage);
       }
@@ -212,7 +202,7 @@ const Steganography: React.FC = () => {
               className="object-contain w-auto max-h-72"
             />
             <p
-              id="fileName"
+              id="fileNameInput"
               className="text-xs text-center text-white font-base font-code"
             >
               {fileName}
@@ -234,7 +224,7 @@ const Steganography: React.FC = () => {
             />
             <textarea
               name="pesan"
-              id="pesan"
+              id="pesanInput"
               placeholder="Masukkan pesan"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -269,7 +259,7 @@ const Steganography: React.FC = () => {
                 </h3>
                 <textarea
                   name="fileName"
-                  id="fileName"
+                  id="encodedFileName"
                   placeholder="Masukkan nama file"
                   value={encodedFileName}
                   onChange={(e) => setEncodedFileName(e.target.value)}
@@ -301,7 +291,7 @@ const Steganography: React.FC = () => {
               className="max-h-[50%] w-auto"
             />
             <p
-              id="fileName"
+              id="fileNameOutput"
               className="text-xs text-center text-white font-base font-code"
             >
               {decodeFileName}
