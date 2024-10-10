@@ -1,354 +1,209 @@
 import React, { useState } from "react";
 import BtnPrimary from "../components/BtnPrimary";
+import BtnSecondary from "../components/BtnSecondary";
 
 const Cryptography: React.FC = () => {
-  const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [encodedImageSrc, setEncodedImageSrc] = useState<string | null>(null);
-  const [decodedImageSrc, setDecodedImageSrc] = useState<string | null>(null);
-  const [message, setMessage] = useState<string>("");
-  const [decodedMessage, setDecodedMessage] = useState<string>("");
-  const [fileName, setFileName] = useState<string>(
-    "Tidak ada gambar yang dipilih"
-  );
-  const [encodedFileName, setEncodedFileName] = useState<string>("");
-  const [decodeFileName, setDecodeFileName] = useState<string>(
-    "Tidak ada gambar yang dipilih"
-  );
+  const [text, setText] = useState<string | null>(null);
+  const [key, setKey] = useState<string | null>(null);
+  const [cipherText, setCipherText] = useState<string | null>(null);
 
-  // Fungsi untuk mengubah teks menjadi biner
-  const textToBinary = (text: string) => {
-    return text
-      .split("")
-      .map((char) => char.charCodeAt(0).toString(2).padStart(8, "0"))
-      .join(""); // Setiap karakter diubah ke biner 8 bit
-  };
+  const [encrpytedText, setEnryptedText] = useState<string | null>(null);
+  const [password, setPassword] = useState<string | null>(null);
+  const [decryptedText, setDecryptedText] = useState<string | null>(null);
 
-  // Fungsi untuk mengubah biner menjadi teks
-  const binaryToText = (binary: string) => {
-    const charArray = binary.match(/.{1,8}/g); // Pisahkan string biner menjadi 8 bit per karakter
-    return charArray
-      ? charArray.map((bin) => String.fromCharCode(parseInt(bin, 2))).join("")
-      : "";
-  };
+  async function handleOnClickA() {
+    const plainText = await decrypt(encrpytedText!, password!);
+    setDecryptedText(plainText);
+    console.log(decryptedText);
+  }
 
-  // Fungsi untuk menyisipkan pesan ke gambar
-  const embedMessageInImage = (imageData: ImageData, binaryMessage: string) => {
-    const rgba = imageData.data;
-    let messageIndex = 0;
+  async function handleOnClick() {
+    const cipher = await encrypt(text!, key!);
+    setCipherText(cipher);
+  }
 
-    // Tambahkan null terminator ke akhir pesan
-    binaryMessage += "00000000";
-
-    // Sisipkan pesan ke dalam bit paling tidak signifikan (LSB)
-    for (let i = 0; i < rgba.length; i += 4) {
-      for (let j = 0; j < 3; j++) {
-        if (messageIndex < binaryMessage.length) {
-          const bit = binaryMessage[messageIndex];
-          rgba[i + j] = (rgba[i + j] & 0xfe) | parseInt(bit);
-          messageIndex++;
-        } else {
-          return imageData;
-        }
-      }
-    }
-    return imageData;
-  };
-
-  // Fungsi untuk mengambil pesan dari gambar
-  const extractMessageFromImage = (
-    imageData: ImageData,
-    messageLength: number
-  ) => {
-    const rgba = imageData.data;
-    let binaryMessage = "";
-    let messageBitCount = messageLength * 8; // Total bit untuk pesan
-
-    // Ekstraksi LSB dari setiap komponen warna
-    for (let i = 0; i < rgba.length; i += 4) {
-      for (let j = 0; j < 3; j++) {
-        if (binaryMessage.length < messageBitCount) {
-          const lsb = (rgba[i + j] & 1).toString(); // Ambil bit paling terakhir
-          binaryMessage += lsb;
-        } else {
-          break;
-        }
-      }
-      if (binaryMessage.length >= messageBitCount) break;
-    }
-
-    return binaryToText(binaryMessage); // Konversi kembali ke teks
-  };
-
-  const handleEncodedImageUpload = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-
-    if (file) {
-      const isImage =
-        file.type === "image/png" ||
-        file.type === "image/jpeg" ||
-        file.type === "image/jpg";
-
-      if (isImage) {
-        setDecodeFileName(file.name);
-
-        const img = new Image();
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          img.src = e.target?.result as string;
-          img.onload = () => {
-            setDecodedImageSrc(img.src);
-          };
-        };
-        reader.readAsDataURL(file);
-      } else {
-        setFileName("Format file tidak didukung");
-        setDecodedImageSrc(null);
-      }
-    }
-  };
-
-  // Fungsi untuk mengunggah gambar
-  // Fungsi untuk mengunggah gambar
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (file) {
-      // Pengecekan format file (hanya menerima .png dan .jpg/.jpeg)
-      const isImage =
-        file.type === "image/png" ||
-        file.type === "image/jpeg" ||
-        file.type === "image/jpg";
-
-      if (isImage) {
-        setFileName(file.name); // Menampilkan nama file jika formatnya benar
-
-        const img = new Image();
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          img.src = e.target?.result as string;
-          img.onload = () => {
-            setImageSrc(img.src); // Set gambar ke state jika berhasil di-load
-          };
-        };
-        reader.readAsDataURL(file);
-      } else {
-        // Tampilkan pesan error jika format file tidak didukung
-        setFileName("Format file tidak didukung");
-        setImageSrc(""); // Kosongkan gambar jika file tidak valid
-      }
-    }
-  };
-
-  // Fungsi untuk menyisipkan pesan dan meng-update gambar
-  const encodeMessageIntoImage = () => {
-    const binaryMessage = textToBinary(message);
-
-    const img = document.querySelector<HTMLImageElement>("#gambar");
-    if (img) {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      if (ctx) {
-        // Pastikan canvas memiliki ukuran yang sesuai dengan gambar asli
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        ctx.drawImage(img, 0, 0); // Menggambar gambar ke canvas
-
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const newImageData = embedMessageInImage(imageData, binaryMessage);
-
-        ctx.putImageData(newImageData, 0, 0);
-        const newImageSrc = canvas.toDataURL();
-        setEncodedImageSrc(newImageSrc);
-        console.log(newImageData);
-        console.log(newImageSrc);
-      }
-    }
-  };
-
-  // Fungsi untuk mendecode pesan dari gambar
-  const decodeMessageFromImage = () => {
-    const img = document.querySelector<HTMLImageElement>("#imageEncoded");
-    if (img) {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      if (ctx) {
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        ctx.drawImage(img, 0, 0);
-
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const extractedMessage = extractMessageFromImage(
-          imageData,
-          message.length
-        );
-
-        setDecodedMessage(extractedMessage);
-      }
+  const copyToClipboard = () => {
+    if (decryptedText) {
+      navigator.clipboard
+        .writeText(decryptedText)
+        .then(() => {
+          // Opsional: Tambahkan feedback untuk user
+          alert("Teks berhasil disalin!");
+        })
+        .catch((err) => {
+          console.error("Gagal menyalin teks: ", err);
+        });
     }
   };
 
   return (
-    <>
-      <main className="h-full p-12 m-4 border-2 text-primary border-primary">
-        <h1 className="mb-8 text-xl font-bold text-white font-code">
-          Cryptography with AES
-        </h1>
+    <main className="h-full p-12 m-4 border-2 text-primary border-primary">
+      <h1 className="mb-8 text-xl font-bold text-white font-code">
+        Cryptography with AES
+      </h1>
 
-        <div className="flex justify-center w-full h-full gap-4">
-          {/* Bagian input gambar dan pesan */}
-          <div className="flex flex-col w-full h-full gap-4 p-4 border-2 border-secPurple">
-            <h2 className="text-base font-bold text-center text-primary font-code">
-              Input
-            </h2>
-            <img
-              src={imageSrc || ""}
-              id="gambar"
-              alt="Uploaded"
-              className="object-contain w-auto max-h-72"
-            />
-            <p
-              id="fileName"
-              className="text-xs text-center text-white font-base font-code"
-            >
-              {fileName}
-            </p>
-            <label
-              htmlFor="imageUpload"
-              className="inline-block cursor-pointer text-sm font-text font-semibold text-secPurple text-center px-3 relative top-0 left-0 py-2 transition-all duration-100 border-2 border-secPurple bg-background ${textColor}
-              hover:top-[-2px] hover:left-[-2px]
-              after:content-[''] after:absolute after:border-secPurple after:-z-10 after:border-2 after:h-full after:w-full after:transition-all after:duration-300 after:top-0 after:left-0 
-              hover:after:translate-x-[6px] hover:after:translate-y-[6px]"
-            >
-              Pilih Gambar
-            </label>
-            <input
-              type="file"
-              id="imageUpload"
-              onChange={handleImageUpload}
-              className="hidden"
-            />
-            <textarea
-              name="pesan"
-              id="pesan"
-              placeholder="Masukkan pesan"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
-            />
-            <BtnPrimary
-              bgColor="bg-secPurple"
-              borderColor="border-secPurple"
-              label="Sematkan Pesan"
-              onClick={encodeMessageIntoImage}
-            />
-          </div>
-          {/* Bagian output gambar yang sudah disisipkan pesan */}
-          <div className="flex flex-col w-full h-full gap-4 p-4 border-2 border-secPurple">
-            <h2 className="text-base font-bold text-center text-primary font-code">
-              Output
-            </h2>
-            {encodedImageSrc && (
-              <>
-                <img
-                  src={encodedImageSrc}
-                  id="encodedImage"
-                  alt="Encoded Image"
-                  className="object-contain w-auto max-h-72"
-                />
-                <p className="text-xs text-center text-white font-base font-code">
-                  {fileName + " (sudah disematkan)"}
-                </p>
-                <h3 className="m-2 font-semibold font-text text-secPurple text-md">
-                  Masukkan Nama File{" "}
-                  <span className="text-sm">(format otomatis .png)</span>
-                </h3>
-                <textarea
-                  name="fileName"
-                  id="fileName"
-                  placeholder="Masukkan nama file"
-                  value={encodedFileName}
-                  onChange={(e) => setEncodedFileName(e.target.value)}
-                  className="focus:ring-[3px] text-sm border-none focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
-                />
-                <a
-                  href={encodedImageSrc}
-                  download={encodedFileName + ".png"}
-                  className="inline-block w-full"
-                >
-                  <BtnPrimary
-                    bgColor="bg-secPurple"
-                    borderColor="border-secPurple"
-                    label="Download Gambar"
-                  />
-                </a>
-              </>
-            )}
-          </div>
-
-          <div className="flex flex-col w-full h-full gap-4 p-4 border-2 border-secPurple">
-            <h2 className="text-base font-bold text-center text-primary font-code">
-              Lihat Pesan
-            </h2>
-            <img
-              src={decodedImageSrc || ""}
-              id="imageEncoded"
-              alt="Uploaded"
-              className="max-h-[50%] w-auto"
-            />
-            <p
-              id="fileName"
-              className="text-xs text-center text-white font-base font-code"
-            >
-              {decodeFileName}
-            </p>
-            <label
-              htmlFor="encodedImageUpload"
-              className="inline-block cursor-pointer text-sm font-text font-semibold text-secPurple text-center px-3 relative top-0 left-0 py-2 transition-all duration-100 border-2 border-secPurple bg-background ${textColor}
-    hover:top-[-2px] hover:left-[-2px]
-    after:content-[''] after:absolute after:border-secPurple after:-z-10 after:border-2 after:h-full after:w-full after:transition-all after:duration-300 after:top-0 after:left-0 
-    hover:after:translate-x-[6px] hover:after:translate-y-[6px]"
-            >
-              Pilih Gambar
-            </label>
-            <input
-              type="file"
-              id="encodedImageUpload"
-              onChange={handleEncodedImageUpload}
-              className="hidden"
-            />
-
-            {decodedMessage ? (
-              <textarea
-                name="pesan"
-                id="pesan"
-                value={decodedMessage}
-                readOnly
-                className="px-4 py-2 text-sm border-none rounded-lg focus:ring-none focus:border-none focus:ring-primary font-base text-background font-text"
-              />
-            ) : (
-              <textarea
-                name="pesan"
-                id="pesan"
-                placeholder="Pesan akan muncul di sini"
-                readOnly
-                className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
-              />
-            )}
-            <BtnPrimary
-              bgColor="bg-secPurple"
-              borderColor="border-secPurple"
-              label="Lihat Pesan"
-              onClick={decodeMessageFromImage}
-            />
-          </div>
+      <button></button>
+      <div className="flex justify-center w-full h-full gap-4">
+        {/* Bagian input gambar dan pesan */}
+        <div className="flex flex-col w-full h-full gap-4 p-4 border-2 border-secBlue">
+          <h2 className="text-base font-bold text-center text-primary font-code">
+            Enkripsi
+          </h2>
+          <h3 className="m-2 font-semibold font-text text-secBlue text-md">
+            Pesan yang akan dienkripsi
+          </h3>
+          <textarea
+            placeholder="Masukkan pesan yang ingin dienkripsi"
+            onChange={(e) => setText(e.target.value)}
+            className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
+          />
+          <h3 className="m-2 font-semibold font-text text-secBlue text-md">
+            Kunci Pesan
+          </h3>
+          <input
+            type="text"
+            placeholder="Masukkan kunci enkripsi"
+            onChange={(e) => setKey(e.target.value)}
+            value={key ?? ""}
+            className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
+          />
+          <BtnPrimary
+            bgColor="bg-secBlue"
+            borderColor="border-secBlue"
+            label="Enkripsi Pesan"
+            onClick={handleOnClick}
+          />
+          <h3 className="m-2 font-semibold font-text text-secBlue text-md">
+            Pesan yang telah dienkripsi
+          </h3>
+          <textarea
+            readOnly
+            value={cipherText ?? ""}
+            placeholder="Hasil pesan yang berhasil dienkripsi"
+            className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
+          />
+          <BtnSecondary
+            textColor="text-secBlue"
+            borderColor="border-secBlue"
+            label="Salin Pesan"
+            onClick={copyToClipboard}
+          />
         </div>
-      </main>
-    </>
+        <div className="flex flex-col w-full h-full gap-4 p-4 border-2 border-secBlue">
+          <h2 className="text-base font-bold text-center text-primary font-code">
+            Dekripsi
+          </h2>
+          <h3 className="m-2 font-semibold font-text text-secBlue text-md">
+            Pesan yang akan didekripsi
+          </h3>
+          <textarea
+            placeholder="Masukkan pesan yang ingin didekripsi"
+            onChange={(e) => setEnryptedText(e.target.value)}
+            className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
+          />
+          <h3 className="m-2 font-semibold font-text text-secBlue text-md">
+            Kunci Pesan
+          </h3>
+          <input
+            type="text"
+            placeholder="Masukkan kunci enkripsi"
+            onChange={(e) => setPassword(e.target.value)}
+            value={password ?? ""}
+            className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
+          />
+          <BtnPrimary
+            bgColor="bg-secBlue"
+            borderColor="border-secBlue"
+            label="Dekripsi Pesan"
+            onClick={handleOnClickA}
+          />
+          <h3 className="m-2 font-semibold font-text text-secBlue text-md">
+            Pesan yang telah didekripsi
+          </h3>
+          <textarea
+            readOnly
+            value={decryptedText ?? ""}
+            placeholder="Hasil pesan yang berhasil dienkripsi"
+            className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
+          />
+          <BtnSecondary
+            textColor="text-secBlue"
+            borderColor="border-secBlue"
+            label="Salin Pesan"
+            onClick={handleOnClick}
+          />
+        </div>
+      </div>
+    </main>
   );
 };
 
 export default Cryptography;
+
+async function encrypt(plainText: string, password: string) {
+  const textEncoder = new TextEncoder();
+
+  const plainTextUTF8 = textEncoder.encode(plainText);
+  const keyUTF8 = new TextEncoder().encode(password);
+
+  const pwHash = await window.crypto.subtle.digest("SHA-256", keyUTF8);
+
+  const iv = window.crypto.getRandomValues(new Uint8Array(16));
+  const algorithm = { name: "AES-CBC", iv: iv };
+  const key = await window.crypto.subtle.importKey(
+    "raw",
+    pwHash,
+    algorithm,
+    false,
+    ["encrypt"]
+  );
+
+  const ctBuffer = await window.crypto.subtle.encrypt(
+    algorithm,
+    key,
+    plainTextUTF8
+  );
+  const ctArray = new Uint8Array(ctBuffer);
+
+  const ctBase64 = btoa(String.fromCharCode(...ctArray));
+
+  const ivHex = Array.from(iv)
+    .map((b) => ("00" + b.toString(16)).slice(-2))
+    .join("");
+
+  return ivHex + ctBase64;
+}
+
+async function decrypt(cipherText: string, password: string) {
+  const ivHex = cipherText.slice(0, 32);
+  const encryptedText = cipherText.slice(32);
+
+  const iv = new Uint8Array(
+    ivHex.match(/.{1,2}/g)!.map((char) => parseInt(char, 16))
+  );
+
+  const ctArray = atob(encryptedText);
+
+  const ctBase64 = new Uint8Array(
+    ctArray.split("").map((char) => char.charCodeAt(0))
+  );
+
+  const pwUTF8 = new TextEncoder().encode(password);
+  const pwHash = await window.crypto.subtle.digest("SHA-256", pwUTF8);
+
+  const alg = { name: "AES-CBC", iv: iv };
+
+  const importKey = await window.crypto.subtle.importKey(
+    "raw",
+    pwHash,
+    alg,
+    false,
+    ["decrypt"]
+  );
+
+  const ptBuffer = await window.crypto.subtle.decrypt(alg, importKey, ctBase64);
+
+  const plainText = new TextDecoder().decode(ptBuffer);
+
+  return plainText;
+}
