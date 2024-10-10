@@ -195,10 +195,14 @@ const Steganography: React.FC = () => {
             <h2 className="text-base font-bold text-center text-primary font-code">
               Input
             </h2>
+            {!encodedImageSrc && (
+              <>
+                <div className="w-full h-64 bg-gray-300"></div>
+              </>
+            )}
             <img
               src={imageSrc || ""}
               id="gambar"
-              alt="Uploaded"
               className="object-contain w-auto max-h-72"
             />
             <p
@@ -284,10 +288,12 @@ const Steganography: React.FC = () => {
             <h2 className="text-base font-bold text-center text-primary font-code">
               Lihat Pesan
             </h2>
+            {!decodedImageSrc && (
+              <div className="w-full h-64 bg-gray-300"></div>
+            )}
             <img
               src={decodedImageSrc || ""}
               id="imageEncoded"
-              alt="Uploaded"
               className="max-h-[50%] w-auto"
             />
             <p

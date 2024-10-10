@@ -14,11 +14,11 @@ const Header = () => {
             <NavLink
               to="/cryptography"
               className={({ isActive }: { isActive: boolean }) =>
-                `inline-block py-2 px-4 transition-all duration-300 relative text-center bg-secBlue text-background
-      hover:translate-x-[-2px] hover:translate-y-[-2px]
-      after:content-[''] after:absolute after:border-secBlue after:-z-10 after:border-2 after:h-full after:w-full after:transition-all after:duration-300 after:top-0 after:left-0 
-      hover:after:translate-x-[4px] hover:after:translate-y-[4px] ${
-        isActive ? "bg-activeBlue text-white" : ""
+                `inline-block py-2 text-secBlue transition-all duration-300 relative text-center
+      ${
+        isActive
+          ? "after:content[''] after:inline-block after:w-full after:h-0.5 after:absolute after:bottom-0 after:left-0 after:bg-secBlue"
+          : ""
       }`
               }
             >
@@ -29,11 +29,11 @@ const Header = () => {
             <NavLink
               to="/steganography"
               className={({ isActive }: { isActive: boolean }) =>
-                `inline-block px-3 relative top-0 left-0 py-2 transition-all duration-100 border-2 border-secPurple bg-background text-secPurple
-              hover:top-[-2px] hover:left-[-2px]
-              after:content-[''] after:absolute after:border-secPurple after:-z-10 after:border-2 after:h-full after:w-full after:transition-all after:duration-300 after:top-0 after:left-0 
-              hover:after:translate-x-[6px] hover:after:translate-y-[6px] ${
-                isActive ? "bg-activeBlue text-white" : ""
+                `inline-block relative top-0 left-0 py-2 transition-all duration-100 text-secPurple
+              ${
+                isActive
+                  ? "after:content[''] after:inline-block after:w-full after:h-0.5 after:absolute after:bottom-0 after:left-0 after:bg-secPurple"
+                  : ""
               }`
               }
             >
