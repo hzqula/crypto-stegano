@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BtnPrimary from "../components/BtnPrimary";
 
 const Steganography: React.FC = () => {
@@ -179,6 +179,8 @@ const Steganography: React.FC = () => {
         setDecodedMessage(extractedMessage);
       }
     }
+
+    console.log(encodedImageSrc);
   };
 
   return (
@@ -195,11 +197,7 @@ const Steganography: React.FC = () => {
             <h2 className="text-base font-bold text-center text-primary font-code">
               Input
             </h2>
-            {!encodedImageSrc && (
-              <>
-                <div className="w-full h-64 bg-gray-300"></div>
-              </>
-            )}
+
             <img
               src={imageSrc || ""}
               id="gambar"
@@ -288,9 +286,6 @@ const Steganography: React.FC = () => {
             <h2 className="text-base font-bold text-center text-primary font-code">
               Lihat Pesan
             </h2>
-            {!decodedImageSrc && (
-              <div className="w-full h-64 bg-gray-300"></div>
-            )}
             <img
               src={decodedImageSrc || ""}
               id="imageEncoded"
