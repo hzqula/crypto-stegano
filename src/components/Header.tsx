@@ -2,14 +2,14 @@ import { Link, NavLink } from "react-router-dom";
 
 const Header = () => {
   return (
-    <header className="top-2 border-primary border-2 right-2 left-2 z-[40] items-center justify-around px-24 h-24 md:flex m-4 bg-transparent hidden">
+    <header className="top-2 flex-col md:flex-row border-primary border-2 right-2 left-2 z-[40] items-center md:justify-around md:px-24 h-24 flex justify-center m-4 bg-transparent">
       <div className="px-4 py-2">
         <h1 className="text-2xl font-bold text-primary font-code">
           <Link to={"/"}>CryptoStegano</Link>
         </h1>
       </div>
       <nav className="flex justify-between h-auto">
-        <ul className="flex items-center justify-center gap-4 text-sm font-bold font-text">
+        <ul className="flex items-center justify-center gap-4 text-xs font-bold md:text-sm font-text">
           <li>
             <NavLink
               to="/cryptography"

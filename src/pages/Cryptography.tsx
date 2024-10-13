@@ -37,19 +37,18 @@ const Cryptography: React.FC = () => {
   };
 
   return (
-    <main className="h-full p-12 m-4 border-2 text-primary border-primary">
-      <h1 className="mb-8 text-xl font-bold text-white font-code">
+    <main className="h-full p-4 m-2 border-2 md:p-8 lg:p-12 md:m-4 text-primary border-primary">
+      <h1 className="mb-6 text-lg font-bold text-center text-white md:text-xl font-code">
         Cryptography with AES
       </h1>
 
-      <button></button>
-      <div className="flex justify-center w-full h-full gap-4">
-        {/* Bagian input gambar dan pesan */}
-        <div className="flex flex-col w-full h-full gap-4 p-4 border-2 border-secBlue">
+      <div className="flex flex-col justify-center w-full h-full gap-6 lg:flex-row lg:gap-8">
+        {/* Bagian Enkripsi */}
+        <div className="flex flex-col w-full h-full gap-4 p-4 border-2 lg:w-1/2 border-secBlue">
           <h2 className="text-base font-bold text-center text-primary font-code">
             Enkripsi
           </h2>
-          <h3 className="m-2 font-semibold font-text text-secBlue text-md">
+          <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
             Pesan yang akan dienkripsi
           </h3>
           <textarea
@@ -57,7 +56,7 @@ const Cryptography: React.FC = () => {
             onChange={(e) => setText(e.target.value)}
             className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
           />
-          <h3 className="m-2 font-semibold font-text text-secBlue text-md">
+          <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
             Kunci Pesan
           </h3>
           <input
@@ -73,7 +72,7 @@ const Cryptography: React.FC = () => {
             label="Enkripsi Pesan"
             onClick={handleOnClick}
           />
-          <h3 className="m-2 font-semibold font-text text-secBlue text-md">
+          <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
             Pesan yang telah dienkripsi
           </h3>
           <textarea
@@ -89,11 +88,13 @@ const Cryptography: React.FC = () => {
             onClick={copyToClipboard}
           />
         </div>
-        <div className="flex flex-col w-full h-full gap-4 p-4 border-2 border-secBlue">
+
+        {/* Bagian Dekripsi */}
+        <div className="flex flex-col w-full h-full gap-4 p-4 border-2 lg:w-1/2 border-secBlue">
           <h2 className="text-base font-bold text-center text-primary font-code">
             Dekripsi
           </h2>
-          <h3 className="m-2 font-semibold font-text text-secBlue text-md">
+          <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
             Pesan yang akan didekripsi
           </h3>
           <textarea
@@ -101,7 +102,7 @@ const Cryptography: React.FC = () => {
             onChange={(e) => setEnryptedText(e.target.value)}
             className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
           />
-          <h3 className="m-2 font-semibold font-text text-secBlue text-md">
+          <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
             Kunci Pesan
           </h3>
           <input
@@ -117,7 +118,7 @@ const Cryptography: React.FC = () => {
             label="Dekripsi Pesan"
             onClick={handleOnClickA}
           />
-          <h3 className="m-2 font-semibold font-text text-secBlue text-md">
+          <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
             Pesan yang telah didekripsi
           </h3>
           <textarea

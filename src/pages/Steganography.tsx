@@ -185,15 +185,14 @@ const Steganography: React.FC = () => {
 
   return (
     <>
-      <main className="h-full p-12 m-4 border-2 text-primary border-primary">
+      <main className="h-full p-6 m-4 border-2 text-primary border-primary">
         <h1 className="mb-8 text-xl font-bold text-white font-code">
           Steganography with LSB
         </h1>
 
-        <button></button>
-        <div className="flex justify-center w-full h-full gap-4">
+        <div className="flex flex-col justify-center w-full h-full gap-4 lg:flex-row">
           {/* Bagian input gambar dan pesan */}
-          <div className="flex flex-col w-full h-full gap-4 p-4 border-2 border-secPurple">
+          <div className="flex flex-col w-full h-full gap-4 p-4 border-2 lg:w-1/3 border-secPurple">
             <h2 className="text-base font-bold text-center text-primary font-code">
               Input
             </h2>
@@ -201,7 +200,7 @@ const Steganography: React.FC = () => {
             <img
               src={imageSrc || ""}
               id="gambar"
-              className="object-contain w-auto max-h-72"
+              className="object-contain w-full max-h-72"
             />
             <p
               id="fileNameInput"
@@ -211,10 +210,10 @@ const Steganography: React.FC = () => {
             </p>
             <label
               htmlFor="imageUpload"
-              className="inline-block cursor-pointer text-sm font-text font-semibold text-secPurple text-center px-3 relative top-0 left-0 py-2 transition-all duration-100 border-2 border-secPurple bg-background ${textColor}
-              hover:top-[-2px] hover:left-[-2px]
-              after:content-[''] after:absolute after:border-secPurple after:-z-10 after:border-2 after:h-full after:w-full after:transition-all after:duration-300 after:top-0 after:left-0 
-              hover:after:translate-x-[6px] hover:after:translate-y-[6px]"
+              className="inline-block cursor-pointer text-sm font-text font-semibold text-secPurple text-center px-3 py-2 relative top-0 left-0 transition-all duration-100 border-2 border-secPurple bg-background
+          hover:top-[-2px] hover:left-[-2px]
+          after:content-[''] after:absolute after:border-secPurple after:-z-10 after:border-2 after:h-full after:w-full after:transition-all after:duration-300 after:top-0 after:left-0
+          hover:after:translate-x-[6px] hover:after:translate-y-[6px]"
             >
               Pilih Gambar
             </label>
@@ -239,8 +238,9 @@ const Steganography: React.FC = () => {
               onClick={encodeMessageIntoImage}
             />
           </div>
+
           {/* Bagian output gambar yang sudah disisipkan pesan */}
-          <div className="flex flex-col w-full h-full gap-4 p-4 border-2 border-secPurple">
+          <div className="flex flex-col w-full h-full gap-4 p-4 border-2 lg:w-1/3 border-secPurple">
             <h2 className="text-base font-bold text-center text-primary font-code">
               Output
             </h2>
@@ -250,7 +250,7 @@ const Steganography: React.FC = () => {
                   src={encodedImageSrc}
                   id="encodedImage"
                   alt="Encoded Image"
-                  className="object-contain w-auto max-h-72"
+                  className="object-contain w-full max-h-72"
                 />
                 <p className="text-xs text-center text-white font-base font-code">
                   {fileName + " (sudah disematkan)"}
@@ -282,14 +282,15 @@ const Steganography: React.FC = () => {
             )}
           </div>
 
-          <div className="flex flex-col w-full h-full gap-4 p-4 border-2 border-secPurple">
+          {/* Bagian lihat pesan */}
+          <div className="flex flex-col w-full h-full gap-4 p-4 border-2 lg:w-1/3 border-secPurple">
             <h2 className="text-base font-bold text-center text-primary font-code">
               Lihat Pesan
             </h2>
             <img
               src={decodedImageSrc || ""}
               id="imageEncoded"
-              className="max-h-[50%] w-auto"
+              className="object-contain w-full max-h-72"
             />
             <p
               id="fileNameOutput"
@@ -299,10 +300,10 @@ const Steganography: React.FC = () => {
             </p>
             <label
               htmlFor="encodedImageUpload"
-              className="inline-block cursor-pointer text-sm font-text font-semibold text-secPurple text-center px-3 relative top-0 left-0 py-2 transition-all duration-100 border-2 border-secPurple bg-background ${textColor}
-    hover:top-[-2px] hover:left-[-2px]
-    after:content-[''] after:absolute after:border-secPurple after:-z-10 after:border-2 after:h-full after:w-full after:transition-all after:duration-300 after:top-0 after:left-0 
-    hover:after:translate-x-[6px] hover:after:translate-y-[6px]"
+              className="inline-block cursor-pointer text-sm font-text font-semibold text-secPurple text-center px-3 py-2 relative top-0 left-0 transition-all duration-100 border-2 border-secPurple bg-background
+          hover:top-[-2px] hover:left-[-2px]
+          after:content-[''] after:absolute after:border-secPurple after:-z-10 after:border-2 after:h-full after:w-full after:transition-all after:duration-300 after:top-0 after:left-0
+          hover:after:translate-x-[6px] hover:after:translate-y-[6px]"
             >
               Pilih Gambar
             </label>
