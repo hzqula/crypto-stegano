@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import BtnPrimary from "../components/BtnPrimary";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 const Steganography: React.FC = () => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -107,34 +110,30 @@ const Steganography: React.FC = () => {
     }
   };
 
-  // Fungsi untuk mengunggah gambar
-  // Fungsi untuk mengunggah gambar
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
     if (file) {
-      // Pengecekan format file (hanya menerima .png dan .jpg/.jpeg)
       const isImage =
         file.type === "image/png" ||
         file.type === "image/jpeg" ||
         file.type === "image/jpg";
 
       if (isImage) {
-        setFileName(file.name); // Menampilkan nama file jika formatnya benar
+        setFileName(file.name);
 
         const img = new Image();
         const reader = new FileReader();
         reader.onload = (e) => {
           img.src = e.target?.result as string;
           img.onload = () => {
-            setImageSrc(img.src); // Set gambar ke state jika berhasil di-load
+            setImageSrc(img.src);
           };
         };
         reader.readAsDataURL(file);
       } else {
-        // Tampilkan pesan error jika format file tidak didukung
         setFileName("Format file tidak didukung");
-        setImageSrc(""); // Kosongkan gambar jika file tidak valid
+        setImageSrc("");
       }
     }
   };
@@ -192,152 +191,154 @@ const Steganography: React.FC = () => {
 
         <div className="flex flex-col justify-center w-full h-full gap-4 lg:flex-row">
           {/* Bagian input gambar dan pesan */}
-          <div className="flex flex-col w-full h-full gap-4 p-4 border-2 lg:w-1/3 border-secPurple">
-            <h2 className="text-base font-bold text-center text-primary font-code">
-              Input
-            </h2>
-
-            <img
-              src={imageSrc || ""}
-              id="gambar"
-              className="object-contain w-full max-h-72"
-            />
-            <p
-              id="fileNameInput"
-              className="text-xs text-center text-white font-base font-code"
-            >
-              {fileName}
-            </p>
-            <label
-              htmlFor="imageUpload"
-              className="inline-block cursor-pointer text-sm font-text font-semibold text-secPurple text-center px-3 py-2 relative top-0 left-0 transition-all duration-100 border-2 border-secPurple bg-background
-          hover:top-[-2px] hover:left-[-2px]
-          after:content-[''] after:absolute after:border-secPurple after:-z-10 after:border-2 after:h-full after:w-full after:transition-all after:duration-300 after:top-0 after:left-0
-          hover:after:translate-x-[6px] hover:after:translate-y-[6px]"
-            >
-              Pilih Gambar
-            </label>
-            <input
-              type="file"
-              id="imageUpload"
-              onChange={handleImageUpload}
-              className="hidden"
-            />
-            <textarea
-              name="pesan"
-              id="pesanInput"
-              placeholder="Masukkan pesan"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
-            />
-            <BtnPrimary
-              bgColor="bg-secPurple"
-              borderColor="border-secPurple"
-              label="Sematkan Pesan"
-              onClick={encodeMessageIntoImage}
-            />
-          </div>
+          <Card className="flex flex-col w-full h-full gap-4 p-4 border-2 lg:w-1/3 border-secPurple bg-background">
+            <CardHeader className="p-0">
+              <CardTitle className="text-base font-bold text-center text-primary font-code">
+                Input
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0 flex flex-col gap-4">
+              <img
+                src={imageSrc || ""}
+                id="gambar"
+                className="object-contain w-full max-h-72"
+              />
+              <p
+                id="fileNameInput"
+                className="text-xs text-center text-white font-base font-code"
+              >
+                {fileName}
+              </p>
+              <label
+                htmlFor="imageUpload"
+                className={cn(
+                  buttonVariants({ variant: "cyberOutlinePurple" }),
+                  "w-full cursor-pointer"
+                )}
+              >
+                Pilih Gambar
+              </label>
+              <input
+                type="file"
+                id="imageUpload"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+              <Textarea
+                name="pesan"
+                id="pesanInput"
+                placeholder="Masukkan pesan"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="bg-white text-background font-text"
+              />
+              <Button
+                variant="cyberPurple"
+                onClick={encodeMessageIntoImage}
+                className="w-full"
+              >
+                Sematkan Pesan
+              </Button>
+            </CardContent>
+          </Card>
 
           {/* Bagian output gambar yang sudah disisipkan pesan */}
-          <div className="flex flex-col w-full h-full gap-4 p-4 border-2 lg:w-1/3 border-secPurple">
-            <h2 className="text-base font-bold text-center text-primary font-code">
-              Output
-            </h2>
-            {encodedImageSrc && (
-              <>
-                <img
-                  src={encodedImageSrc}
-                  id="encodedImage"
-                  alt="Encoded Image"
-                  className="object-contain w-full max-h-72"
-                />
-                <p className="text-xs text-center text-white font-base font-code">
-                  {fileName + " (sudah disematkan)"}
-                </p>
-                <h3 className="m-2 font-semibold font-text text-secPurple text-md">
-                  Masukkan Nama File{" "}
-                  <span className="text-sm">(format otomatis .png)</span>
-                </h3>
-                <textarea
-                  name="fileName"
-                  id="encodedFileName"
-                  placeholder="Masukkan nama file"
-                  value={encodedFileName}
-                  onChange={(e) => setEncodedFileName(e.target.value)}
-                  className="focus:ring-[3px] text-sm border-none focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
-                />
-                <a
-                  href={encodedImageSrc}
-                  download={encodedFileName + ".png"}
-                  className="inline-block w-full"
-                >
-                  <BtnPrimary
-                    bgColor="bg-secPurple"
-                    borderColor="border-secPurple"
-                    label="Download Gambar"
+          <Card className="flex flex-col w-full h-full gap-4 p-4 border-2 lg:w-1/3 border-secPurple bg-background">
+            <CardHeader className="p-0">
+              <CardTitle className="text-base font-bold text-center text-primary font-code">
+                Output
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0 flex flex-col gap-4">
+              {encodedImageSrc && (
+                <>
+                  <img
+                    src={encodedImageSrc}
+                    id="encodedImage"
+                    alt="Encoded Image"
+                    className="object-contain w-full max-h-72"
                   />
-                </a>
-              </>
-            )}
-          </div>
+                  <p className="text-xs text-center text-white font-base font-code">
+                    {fileName + " (sudah disematkan)"}
+                  </p>
+                  <h3 className="m-2 font-semibold font-text text-secPurple text-md">
+                    Masukkan Nama File{" "}
+                    <span className="text-sm">(format otomatis .png)</span>
+                  </h3>
+                  <Textarea
+                    name="fileName"
+                    id="encodedFileName"
+                    placeholder="Masukkan nama file"
+                    value={encodedFileName}
+                    onChange={(e) => setEncodedFileName(e.target.value)}
+                    className="bg-white text-background font-text"
+                  />
+                  <a
+                    href={encodedImageSrc}
+                    download={encodedFileName + ".png"}
+                    className="inline-block w-full"
+                  >
+                    <Button variant="cyberPurple" className="w-full">
+                      Download Gambar
+                    </Button>
+                  </a>
+                </>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Bagian lihat pesan */}
-          <div className="flex flex-col w-full h-full gap-4 p-4 border-2 lg:w-1/3 border-secPurple">
-            <h2 className="text-base font-bold text-center text-primary font-code">
-              Lihat Pesan
-            </h2>
-            <img
-              src={decodedImageSrc || ""}
-              id="imageEncoded"
-              className="object-contain w-full max-h-72"
-            />
-            <p
-              id="fileNameOutput"
-              className="text-xs text-center text-white font-base font-code"
-            >
-              {decodeFileName}
-            </p>
-            <label
-              htmlFor="encodedImageUpload"
-              className="inline-block cursor-pointer text-sm font-text font-semibold text-secPurple text-center px-3 py-2 relative top-0 left-0 transition-all duration-100 border-2 border-secPurple bg-background
-          hover:top-[-2px] hover:left-[-2px]
-          after:content-[''] after:absolute after:border-secPurple after:-z-10 after:border-2 after:h-full after:w-full after:transition-all after:duration-300 after:top-0 after:left-0
-          hover:after:translate-x-[6px] hover:after:translate-y-[6px]"
-            >
-              Pilih Gambar
-            </label>
-            <input
-              type="file"
-              id="encodedImageUpload"
-              onChange={handleEncodedImageUpload}
-              className="hidden"
-            />
+          <Card className="flex flex-col w-full h-full gap-4 p-4 border-2 lg:w-1/3 border-secPurple bg-background">
+            <CardHeader className="p-0">
+              <CardTitle className="text-base font-bold text-center text-primary font-code">
+                Lihat Pesan
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0 flex flex-col gap-4">
+              <img
+                src={decodedImageSrc || ""}
+                id="imageEncoded"
+                className="object-contain w-full max-h-72"
+              />
+              <p
+                id="fileNameOutput"
+                className="text-xs text-center text-white font-base font-code"
+              >
+                {decodeFileName}
+              </p>
+              <label
+                htmlFor="encodedImageUpload"
+                className={cn(
+                  buttonVariants({ variant: "cyberOutlinePurple" }),
+                  "w-full cursor-pointer"
+                )}
+              >
+                Pilih Gambar
+              </label>
+              <input
+                type="file"
+                id="encodedImageUpload"
+                onChange={handleEncodedImageUpload}
+                className="hidden"
+              />
 
-            {decodedMessage ? (
-              <textarea
+              <Textarea
                 name="pesan"
                 id="pesan"
                 value={decodedMessage}
-                readOnly
-                className="px-4 py-2 text-sm border-none rounded-lg focus:ring-none focus:border-none focus:ring-primary font-base text-background font-text"
-              />
-            ) : (
-              <textarea
-                name="pesan"
-                id="pesan"
                 placeholder="Pesan akan muncul di sini"
                 readOnly
-                className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
+                className="bg-white text-background font-text"
               />
-            )}
-            <BtnPrimary
-              bgColor="bg-secPurple"
-              borderColor="border-secPurple"
-              label="Lihat Pesan"
-              onClick={decodeMessageFromImage}
-            />
-          </div>
+              <Button
+                variant="cyberPurple"
+                onClick={decodeMessageFromImage}
+                className="w-full"
+              >
+                Lihat Pesan
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </main>
     </>

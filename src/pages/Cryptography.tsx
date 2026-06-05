@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import BtnPrimary from "../components/BtnPrimary";
-import BtnSecondary from "../components/BtnSecondary";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 const Cryptography: React.FC = () => {
   const [text, setText] = useState<string | null>(null);
@@ -27,7 +29,6 @@ const Cryptography: React.FC = () => {
       navigator.clipboard
         .writeText(decryptedText)
         .then(() => {
-          // Opsional: Tambahkan feedback untuk user
           alert("Teks berhasil disalin!");
         })
         .catch((err) => {
@@ -44,96 +45,108 @@ const Cryptography: React.FC = () => {
 
       <div className="flex flex-col justify-center w-full h-full gap-6 lg:flex-row lg:gap-8">
         {/* Bagian Enkripsi */}
-        <div className="flex flex-col w-full h-full gap-4 p-4 border-2 lg:w-1/2 border-secBlue">
-          <h2 className="text-base font-bold text-center text-primary font-code">
-            Enkripsi
-          </h2>
-          <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
-            Pesan yang akan dienkripsi
-          </h3>
-          <textarea
-            placeholder="Masukkan pesan yang ingin dienkripsi"
-            onChange={(e) => setText(e.target.value)}
-            className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
-          />
-          <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
-            Kunci Pesan
-          </h3>
-          <input
-            type="text"
-            placeholder="Masukkan kunci enkripsi"
-            onChange={(e) => setKey(e.target.value)}
-            value={key ?? ""}
-            className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
-          />
-          <BtnPrimary
-            bgColor="bg-secBlue"
-            borderColor="border-secBlue"
-            label="Enkripsi Pesan"
-            onClick={handleOnClick}
-          />
-          <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
-            Pesan yang telah dienkripsi
-          </h3>
-          <textarea
-            readOnly
-            value={cipherText ?? ""}
-            placeholder="Hasil pesan yang berhasil dienkripsi"
-            className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
-          />
-          <BtnSecondary
-            textColor="text-secBlue"
-            borderColor="border-secBlue"
-            label="Salin Pesan"
-            onClick={copyToClipboard}
-          />
-        </div>
+        <Card className="flex flex-col w-full h-full gap-4 p-4 border-2 lg:w-1/2 border-secBlue bg-background">
+          <CardHeader className="p-0">
+            <CardTitle className="text-base font-bold text-center text-primary font-code">
+              Enkripsi
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0 flex flex-col gap-4">
+            <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
+              Pesan yang akan dienkripsi
+            </h3>
+            <Textarea
+              placeholder="Masukkan pesan yang ingin dienkripsi"
+              onChange={(e) => setText(e.target.value)}
+              className="bg-white text-background font-text"
+            />
+            <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
+              Kunci Pesan
+            </h3>
+            <Input
+              type="text"
+              placeholder="Masukkan kunci enkripsi"
+              onChange={(e) => setKey(e.target.value)}
+              value={key ?? ""}
+              className="bg-white text-background font-text"
+            />
+            <Button
+              variant="cyberBlue"
+              onClick={handleOnClick}
+              className="w-full"
+            >
+              Enkripsi Pesan
+            </Button>
+            <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
+              Pesan yang telah dienkripsi
+            </h3>
+            <Textarea
+              readOnly
+              value={cipherText ?? ""}
+              placeholder="Hasil pesan yang berhasil dienkripsi"
+              className="bg-white text-background font-text"
+            />
+            <Button
+              variant="cyberOutlineBlue"
+              onClick={copyToClipboard}
+              className="w-full"
+            >
+              Salin Pesan
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* Bagian Dekripsi */}
-        <div className="flex flex-col w-full h-full gap-4 p-4 border-2 lg:w-1/2 border-secBlue">
-          <h2 className="text-base font-bold text-center text-primary font-code">
-            Dekripsi
-          </h2>
-          <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
-            Pesan yang akan didekripsi
-          </h3>
-          <textarea
-            placeholder="Masukkan pesan yang ingin didekripsi"
-            onChange={(e) => setEnryptedText(e.target.value)}
-            className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
-          />
-          <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
-            Kunci Pesan
-          </h3>
-          <input
-            type="text"
-            placeholder="Masukkan kunci enkripsi"
-            onChange={(e) => setPassword(e.target.value)}
-            value={password ?? ""}
-            className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
-          />
-          <BtnPrimary
-            bgColor="bg-secBlue"
-            borderColor="border-secBlue"
-            label="Dekripsi Pesan"
-            onClick={handleOnClickA}
-          />
-          <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
-            Pesan yang telah didekripsi
-          </h3>
-          <textarea
-            readOnly
-            value={decryptedText ?? ""}
-            placeholder="Hasil pesan yang berhasil dienkripsi"
-            className="focus:ring-[3px] border-none text-sm focus:border-none focus:ring-primary px-4 py-2 font-base rounded-lg text-background font-text"
-          />
-          <BtnSecondary
-            textColor="text-secBlue"
-            borderColor="border-secBlue"
-            label="Salin Pesan"
-            onClick={handleOnClick}
-          />
-        </div>
+        <Card className="flex flex-col w-full h-full gap-4 p-4 border-2 lg:w-1/2 border-secBlue bg-background">
+          <CardHeader className="p-0">
+            <CardTitle className="text-base font-bold text-center text-primary font-code">
+              Dekripsi
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0 flex flex-col gap-4">
+            <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
+              Pesan yang akan didekripsi
+            </h3>
+            <Textarea
+              placeholder="Masukkan pesan yang ingin didekripsi"
+              onChange={(e) => setEnryptedText(e.target.value)}
+              className="bg-white text-background font-text"
+            />
+            <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
+              Kunci Pesan
+            </h3>
+            <Input
+              type="text"
+              placeholder="Masukkan kunci enkripsi"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password ?? ""}
+              className="bg-white text-background font-text"
+            />
+            <Button
+              variant="cyberBlue"
+              onClick={handleOnClickA}
+              className="w-full"
+            >
+              Dekripsi Pesan
+            </Button>
+            <h3 className="m-2 text-sm font-semibold font-text text-secBlue md:text-md">
+              Pesan yang telah didekripsi
+            </h3>
+            <Textarea
+              readOnly
+              value={decryptedText ?? ""}
+              placeholder="Hasil pesan yang berhasil dienkripsi"
+              className="bg-white text-background font-text"
+            />
+            <Button
+              variant="cyberOutlineBlue"
+              onClick={handleOnClick}
+              className="w-full"
+            >
+              Salin Pesan
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </main>
   );

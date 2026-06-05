@@ -18,6 +18,14 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
+        cyberBlue:
+          "text-background font-semibold transition-all duration-300 relative text-center bg-secBlue hover:translate-x-[-2px] hover:translate-y-[-2px] after:content-[''] after:absolute after:border-secBlue after:-z-10 after:border-2 after:h-full after:w-full after:transition-all after:duration-300 after:top-0 after:left-0 hover:after:translate-x-[4px] hover:after:translate-y-[4px]",
+        cyberPurple:
+          "text-background font-semibold transition-all duration-300 relative text-center bg-secPurple hover:translate-x-[-2px] hover:translate-y-[-2px] after:content-[''] after:absolute after:border-secPurple after:-z-10 after:border-2 after:h-full after:w-full after:transition-all after:duration-300 after:top-0 after:left-0 hover:after:translate-x-[4px] hover:after:translate-y-[4px]",
+        cyberOutlineBlue:
+          "font-semibold relative top-0 left-0 transition-all duration-100 border-2 border-secBlue bg-background text-secBlue hover:top-[-2px] hover:left-[-2px] after:content-[''] after:absolute after:border-secBlue after:-z-10 after:border-2 after:h-full after:w-full after:transition-all after:duration-300 after:top-0 after:left-0 hover:after:translate-x-[6px] hover:after:translate-y-[6px]",
+        cyberOutlinePurple:
+          "font-semibold relative top-0 left-0 transition-all duration-100 border-2 border-secPurple bg-background text-secPurple hover:top-[-2px] hover:left-[-2px] after:content-[''] after:absolute after:border-secPurple after:-z-10 after:border-2 after:h-full after:w-full after:transition-all after:duration-300 after:top-0 after:left-0 hover:after:translate-x-[6px] hover:after:translate-y-[6px]",
       },
       size: {
         default:
