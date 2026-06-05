@@ -9,34 +9,35 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Lock, Image } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <main className="min-h-screen p-6 md:p-12 lg:p-16 flex flex-col items-center">
+    <main className="min-h-screen p-4 sm:p-8 md:p-12 lg:p-16 flex flex-col items-center">
       {/* Hero Section */}
-      <section className="text-center max-w-4xl mb-16 mt-8 flex flex-col items-center gap-6 animate-fade-in">
-        <h1 className="text-5xl md:text-7xl font-bold font-display tracking-tight text-transparent bg-clip-text bg-linear-to-r from-primary via-secBlue to-secPurple filter drop-shadow-[0_2px_10px_rgba(4,231,98,0.2)]">
+      <section className="text-center max-w-4xl mb-10 md:mb-16 mt-4 md:mt-8 flex flex-col items-center gap-4 md:gap-6 animate-fade-in">
+        <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold font-display tracking-tight text-transparent bg-clip-text bg-linear-to-r from-primary via-secBlue to-secPurple filter drop-shadow-[0_2px_10px_rgba(4,231,98,0.2)]">
           CryptoStegano
         </h1>
-        <p className="text-sm md:text-lg text-muted-foreground font-text max-w-2xl leading-relaxed">
+        <p className="text-xs sm:text-sm md:text-base lg:text-lg text-muted-foreground font-text max-w-2xl leading-relaxed">
           Amankan pesan dengan Cryptography atau sisipkan pesan di dalam gambar
           dengan Steganography.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-6 w-full justify-center max-w-md mt-4">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full justify-center max-w-sm sm:max-w-md mt-2 md:mt-4">
           <Button
             variant="cyberOutlineBlue"
             onClick={() => navigate("/cryptography")}
-            className="w-full text-base py-6 font-code"
+            className="w-full text-xs sm:text-sm md:text-base py-5 sm:py-6 font-code"
           >
             Buka Kriptografi
           </Button>
           <Button
             variant="cyberOutlinePurple"
             onClick={() => navigate("/steganography")}
-            className="w-full text-base py-6 font-code"
+            className="w-full text-xs sm:text-sm md:text-base py-5 sm:py-6 font-code"
           >
             Buka Steganografi
           </Button>
@@ -44,40 +45,40 @@ const Landing: React.FC = () => {
       </section>
 
       {/* Grid Penjelasan Metode */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-6xl">
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 w-full max-w-6xl">
         {/* Card Kriptografi */}
         <Card className="border-2 border-secBlue bg-background/50 backdrop-blur-md relative overflow-hidden flex flex-col">
-          <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-            <Lock className="size-36 text-secBlue" />
+          <div className="absolute top-0 right-0 p-4 md:p-8 opacity-10 pointer-events-none">
+            <Lock className="size-24 sm:size-36 text-secBlue" />
           </div>
-          <CardHeader className="flex flex-col gap-2">
-            <div className="flex items-center gap-3">
-              <div className="p-2 border border-secBlue bg-secBlue/10 text-secBlue">
-                <Lock className="size-6" />
+          <CardHeader className="flex flex-col gap-2 p-4 sm:p-6">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-2 border border-secBlue bg-secBlue/10 text-secBlue shrink-0">
+                <Lock className="size-5 sm:size-6" />
               </div>
-              <CardTitle className="text-2xl font-bold font-display text-secBlue">
+              <CardTitle className="text-base sm:text-xl md:text-2xl font-bold font-display text-secBlue">
                 Kriptografi AES-CBC
               </CardTitle>
             </div>
-            <CardDescription className="font-text text-muted-foreground text-sm mt-2 leading-relaxed">
+            <CardDescription className="font-text text-muted-foreground text-xs sm:text-sm mt-1 sm:mt-2 leading-relaxed">
               Advanced Encryption Standard (AES) dalam mode Cipher Block
               Chaining (CBC) adalah algoritma enkripsi simetris yang mengubah
               teks asli menjadi cipher text acak yang tidak dapat dibaca tanpa
               kunci keamanan.
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col gap-6 grow justify-between">
+          <CardContent className="flex flex-col gap-4 sm:gap-6 grow justify-between p-4 sm:p-6 pt-0 sm:pt-0">
             {/* Langkah-langkah */}
-            <div className="flex flex-col gap-4 font-text">
-              <h4 className="text-sm font-semibold font-code text-primary">
+            <div className="flex flex-col gap-3 sm:gap-4 font-text">
+              <h4 className="text-xs sm:text-sm font-semibold font-code text-primary">
                 Langkah-langkah Enkripsi:
               </h4>
               <ol className="flex flex-col gap-3 text-xs leading-relaxed">
-                <li className="flex gap-3 items-start">
-                  <span className="flex items-center justify-center border border-secBlue text-secBlue font-code font-bold size-5 shrink-0">
+                <li className="flex gap-2 sm:gap-3 items-start">
+                  <span className="flex items-center justify-center border border-secBlue text-secBlue font-code font-bold size-5 shrink-0 text-[10px] sm:text-xs">
                     1
                   </span>
-                  <p>
+                  <p className="text-[11px] sm:text-xs">
                     <strong className="text-white">
                       Hashing Kunci (SHA-256):
                     </strong>{" "}
@@ -85,11 +86,11 @@ const Landing: React.FC = () => {
                     biner 256-bit agar memiliki kekuatan kunci standar militer.
                   </p>
                 </li>
-                <li className="flex gap-3 items-start">
-                  <span className="flex items-center justify-center border border-secBlue text-secBlue font-code font-bold size-5 shrink-0">
+                <li className="flex gap-2 sm:gap-3 items-start">
+                  <span className="flex items-center justify-center border border-secBlue text-secBlue font-code font-bold size-5 shrink-0 text-[10px] sm:text-xs">
                     2
                   </span>
-                  <p>
+                  <p className="text-[11px] sm:text-xs">
                     <strong className="text-white">
                       Generasi IV (Initialization Vector):
                     </strong>{" "}
@@ -98,11 +99,11 @@ const Landing: React.FC = () => {
                     selalu menghasilkan cipher text berbeda.
                   </p>
                 </li>
-                <li className="flex gap-3 items-start">
-                  <span className="flex items-center justify-center border border-secBlue text-secBlue font-code font-bold size-5 shrink-0">
+                <li className="flex gap-2 sm:gap-3 items-start">
+                  <span className="flex items-center justify-center border border-secBlue text-secBlue font-code font-bold size-5 shrink-0 text-[10px] sm:text-xs">
                     3
                   </span>
-                  <p>
+                  <p className="text-[11px] sm:text-xs">
                     <strong className="text-white">
                       Penyandian Blok (Chaining):
                     </strong>{" "}
@@ -111,11 +112,11 @@ const Landing: React.FC = () => {
                     dengan kunci AES.
                   </p>
                 </li>
-                <li className="flex gap-3 items-start">
-                  <span className="flex items-center justify-center border border-secBlue text-secBlue font-code font-bold size-5 shrink-0">
+                <li className="flex gap-2 sm:gap-3 items-start">
+                  <span className="flex items-center justify-center border border-secBlue text-secBlue font-code font-bold size-5 shrink-0 text-[10px] sm:text-xs">
                     4
                   </span>
-                  <p>
+                  <p className="text-[11px] sm:text-xs">
                     <strong className="text-white">
                       Penggabungan & Encoding:
                     </strong>{" "}
@@ -130,7 +131,7 @@ const Landing: React.FC = () => {
             <Button
               variant="cyberBlue"
               onClick={() => navigate("/cryptography")}
-              className="w-full mt-4"
+              className="w-full mt-4 text-xs sm:text-sm py-4 sm:py-5"
             >
               Coba Enkripsi AES
             </Button>
@@ -138,48 +139,48 @@ const Landing: React.FC = () => {
         </Card>
 
         {/* Card Steganografi */}
-        <Card className="border-2 border-secPurple bg-background/50 backdrop-blur-md relative overflow-hidden flex flex-col">
-          <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-            <Image className="size-36 text-secPurple" />
+        <Card className="border-2 border-secPurple bg-background/50 backdrop-blur-md relative overflow-hidden flex flex-col mt-0">
+          <div className="absolute top-0 right-0 p-4 md:p-8 opacity-10 pointer-events-none">
+            <Image className="size-24 sm:size-36 text-secPurple" />
           </div>
-          <CardHeader className="flex flex-col gap-2">
-            <div className="flex items-center gap-3">
-              <div className="p-2 border border-secPurple bg-secPurple/10 text-secPurple">
-                <Image className="size-6" />
+          <CardHeader className="flex flex-col gap-2 p-4 sm:p-6">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-2 border border-secPurple bg-secPurple/10 text-secPurple shrink-0">
+                <Image className="size-5 sm:size-6" />
               </div>
-              <CardTitle className="text-2xl font-bold font-display text-secPurple">
+              <CardTitle className="text-base sm:text-xl md:text-2xl font-bold font-display text-secPurple">
                 Steganografi LSB
               </CardTitle>
             </div>
-            <CardDescription className="font-text text-muted-foreground text-sm mt-2 leading-relaxed">
+            <CardDescription className="font-text text-muted-foreground text-xs sm:text-sm mt-1 sm:mt-2 leading-relaxed">
               Least Significant Bit (LSB) adalah teknik steganografi yang
               menyisipkan pesan rahasia ke dalam bit terakhir (terendah) dari
               setiap piksel warna gambar, sehingga tidak terdeteksi oleh mata
               manusia.
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col gap-6 grow justify-between">
+          <CardContent className="flex flex-col gap-4 sm:gap-6 grow justify-between p-4 sm:p-6 pt-0 sm:pt-0">
             {/* Langkah-langkah */}
-            <div className="flex flex-col gap-4 font-text">
-              <h4 className="text-sm font-semibold font-code text-primary">
+            <div className="flex flex-col gap-3 sm:gap-4 font-text">
+              <h4 className="text-xs sm:text-sm font-semibold font-code text-primary">
                 Langkah-langkah Penyematan:
               </h4>
               <ol className="flex flex-col gap-3 text-xs leading-relaxed">
-                <li className="flex gap-3 items-start">
-                  <span className="flex items-center justify-center border border-secPurple text-secPurple font-code font-bold size-5 shrink-0">
+                <li className="flex gap-2 sm:gap-3 items-start">
+                  <span className="flex items-center justify-center border border-secPurple text-secPurple font-code font-bold size-5 shrink-0 text-[10px] sm:text-xs">
                     1
                   </span>
-                  <p>
+                  <p className="text-[11px] sm:text-xs">
                     <strong className="text-white">Konversi ke Biner:</strong>{" "}
                     Mengonversi pesan teks (atau cipher text AES) menjadi
                     deretan angka biner 0 dan 1 (8-bit per karakter).
                   </p>
                 </li>
-                <li className="flex gap-3 items-start">
-                  <span className="flex items-center justify-center border border-secPurple text-secPurple font-code font-bold size-5 shrink-0">
+                <li className="flex gap-2 sm:gap-3 items-start">
+                  <span className="flex items-center justify-center border border-secPurple text-secPurple font-code font-bold size-5 shrink-0 text-[10px] sm:text-xs">
                     2
                   </span>
-                  <p>
+                  <p className="text-[11px] sm:text-xs">
                     <strong className="text-white">
                       Penyisipan Header & Penanda:
                     </strong>{" "}
@@ -188,11 +189,11 @@ const Landing: React.FC = () => {
                     di bagian paling belakang.
                   </p>
                 </li>
-                <li className="flex gap-3 items-start">
-                  <span className="flex items-center justify-center border border-secPurple text-secPurple font-code font-bold size-5 shrink-0">
+                <li className="flex gap-2 sm:gap-3 items-start">
+                  <span className="flex items-center justify-center border border-secPurple text-secPurple font-code font-bold size-5 shrink-0 text-[10px] sm:text-xs">
                     3
                   </span>
-                  <p>
+                  <p className="text-[11px] sm:text-xs">
                     <strong className="text-white">
                       Modifikasi Bit Piksel (LSB):
                     </strong>{" "}
@@ -201,11 +202,11 @@ const Landing: React.FC = () => {
                     dengan bit pesan rahasia secara berurutan.
                   </p>
                 </li>
-                <li className="flex gap-3 items-start">
-                  <span className="flex items-center justify-center border border-secPurple text-secPurple font-code font-bold size-5 shrink-0">
+                <li className="flex gap-2 sm:gap-3 items-start">
+                  <span className="flex items-center justify-center border border-secPurple text-secPurple font-code font-bold size-5 shrink-0 text-[10px] sm:text-xs">
                     4
                   </span>
-                  <p>
+                  <p className="text-[11px] sm:text-xs">
                     <strong className="text-white">
                       Penyimpanan Gambar (.png):
                     </strong>{" "}
@@ -220,7 +221,7 @@ const Landing: React.FC = () => {
             <Button
               variant="cyberPurple"
               onClick={() => navigate("/steganography")}
-              className="w-full mt-4"
+              className="w-full mt-4 text-xs sm:text-sm py-4 sm:py-5"
             >
               Coba Steganografi LSB
             </Button>
