@@ -24,10 +24,10 @@ const Cryptography: React.FC = () => {
     setCipherText(cipher);
   }
 
-  const copyToClipboard = () => {
-    if (decryptedText) {
+  const copyToClipboard = (text: string | null) => {
+    if (text) {
       navigator.clipboard
-        .writeText(decryptedText)
+        .writeText(text)
         .then(() => {
           alert("Teks berhasil disalin!");
         })
@@ -88,7 +88,7 @@ const Cryptography: React.FC = () => {
             />
             <Button
               variant="cyberOutlineBlue"
-              onClick={copyToClipboard}
+              onClick={() => copyToClipboard(cipherText)}
               className="w-full"
             >
               Salin Pesan
@@ -140,7 +140,7 @@ const Cryptography: React.FC = () => {
             />
             <Button
               variant="cyberOutlineBlue"
-              onClick={handleOnClick}
+              onClick={() => copyToClipboard(decryptedText)}
               className="w-full"
             >
               Salin Pesan
