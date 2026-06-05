@@ -3,12 +3,14 @@ import Header from "./components/Header";
 import Steganography from "./pages/Steganography";
 import Landing from "./pages/Landing";
 import Cryptography from "./pages/Cryptography";
+import { Toaster } from "@/components/ui/sonner";
 
 const Layout = () => {
   return (
     <>
       <Header />
       <Outlet />
+      <Toaster />
     </>
   );
 };

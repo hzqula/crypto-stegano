@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { toast } from "sonner";
 
 const Cryptography: React.FC = () => {
   const [text, setText] = useState<string | null>(null);
@@ -29,7 +30,7 @@ const Cryptography: React.FC = () => {
       navigator.clipboard
         .writeText(text)
         .then(() => {
-          alert("Teks berhasil disalin!");
+          toast("Teks berhasil disalin!");
         })
         .catch((err) => {
           console.error("Gagal menyalin teks: ", err);
