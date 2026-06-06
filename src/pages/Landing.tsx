@@ -9,7 +9,6 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Lock, Image } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
